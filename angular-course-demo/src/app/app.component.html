@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <!-- A pipe is essentially a function that is going to take as input as start
+   date and it's going to give us a ouput as the formatted string.-->
+   <!-- {{startDate | date}} is essentially a pipe and it allows us to have our own format of date-->
+  <div>
+    Start Date: {{startDate | date : 'MM/dd/yyyy'}}
+  </div>
+
+  <!-- Another example of pipe -->
+  <div class = "demo">
+    {{data.title | titlecase}}
+  </div>
+
+  <div class = "demo1">
+    <div>{{data.price | number : '3.3-5'}}</div>
+    <div>{{data.price | currency : 'EUR'}}</div>
+    <div>Percentage : {{data.rate | percent}}</div>
+  </div>
+
+  {{courses | json }}
+
+  <!-- Key Value Pipe -->
+  <div *ngFor="let pair of data.course | keyvalue">
+    {{pair.key + ':' + pair.value}}
+  </div>
+
+  <button (click)="onCoursesEdited()">
+    Edit Courses
+  </button>
+
+  <!-- Suppose you want to attach some events to the h1 tag , we used event binding. -->
+    <!-- <h1>
+      Welcome to {{data.title}}
+    </h1> -->
+
+      <!-- If you want to pass the title to the input , use the attribute / property 
+    binding. -->
+  <!-- <input (keyup)="onKeyUp(titleInput.value)" class="demo" [value]="data.title" #titleInput>
+  <button (click)="onAlert()">Click Me !</button> -->
+
+  <!-- <h1>{{rxjsCourse.description}}</h1> -->
+
+  <!-- Getting reference of the HTML element. -->
+  <div class="courses" #container *ngIf="courses[0] as course">
+    <!-- <app-course-card (click)="onCardClicked()" [course]="coreCourse"></app-course-card> -->
+    
+    <!-- <app-course-card (courseSelected)="onCourseSelected($event)" [course]="coreCourse"></app-course-card>
+    
+    <app-course-card [course]="rxjsCourse"></app-course-card>
+    <app-course-card [course]="ngrxCourse"></app-course-card> -->
+
+    <!-- Whenever the courses array changes wants to update the page in the optimal way. 
+      Track , helps us uniquely identify all the courses in the courses array.
+    -->
+    <!-- @for(course of courses; track trackCourse; let index = $index; let count = $count; let first=$first; 
+    let last = $last; let even = $even; let odd = $odd) { -->
+      <!-- <h1>Course: {{count}}</h1> -->
+
+      <!-- <app-course-card 
+        [course]="course" 
+        [index]="index"
+        [class.is-first]="first"
+        [class.is-last]="last"
+        [class.is-even]="even"
+        [class.is-odd]="odd"
+
+        (courseSelected)="onCourseSelected($event)"/>
+    }
+    @empty {
+      <h1>No courses found!</h1>  
+    } -->
+
+    <!-- NgFor Core Directive -->
+    <app-course-card *ngFor="let course of courses | slice:0:2;index as i; first as isFirst; last as isLast; even as isEven; odd as isOdd"
+       [class.is-first]="isFirst"
+       [class.is-last]="isLast"
+       [class.is-even]="isEven"
+       [class.is-odd]="isOdd"
+      (courseSelected)="onCourseSelected($event)" [course]="course" [cardIndex]="i+1"/>
+
+      <!-- Understanding the Local Template Querying -->
+      <!--  -->
+
+      <!-- Getting reference of the component -->
+      <app-course-card  (courseSelected)="onCourseSelected($event)" [course]="courses[0]" #cardRef1>
+      </app-course-card>
+
+      <app-course-card  (courseSelected)="onCourseSelected($event)" [course]="courses[1]" #cardRef2>
+      </app-course-card>
+
+      <!-- Understanding Content Projection -->
+      <app-course-card  
+          (courseSelected)="onCourseSelected($event)" [course]="courses[1]">
+
+          <!-- Out Goal is to project the complete container that we have here 
+            into the image slot. And we can go so by projecting based on the presence of the CSS Classes.-->
+          <!-- <div class="course-image" #courseImage>
+            <img width="300" alt="Angular Logo" [src]="course.iconUrl">
+            <h5>Total Lessons : 5</h5>
+          </div> -->
+
+          <!-- We are passing the url in the src property. -->
+          <app-course-image [src]="course.iconUrl"></app-course-image>
+          <app-course-image [src]="course.iconUrl"></app-course-image>
+          <app-course-image [src]="course.iconUrl"></app-course-image>
+          <app-course-image [src]="course.iconUrl"></app-course-image>
+
+
+          <div class="course-description">
+             {{course.longDescription}}
+          </div>
+
+          Edit Description : <textarea></textarea>
+      </app-course-card>
+
+      <app-course-card (courseSelected)="onCourseSelected($event)" [course]="courses[1]">
+        <h5>Total Lessons : 10</h5>
+      </app-course-card>
+
+
+      <!-- Understanding Template Instaition -->
+
+       <!-- Understanding NG-Template -->
+
+       <!-- This will call the description property of the context object itself. -->
+        <ng-template #blankImage let-courseName = "description">
+            <img src="/assests/empty-image.png">
+            <p class="warn">{{course.description}} has no image yet.</p>
+        </ng-template>
+
+        <!-- This is where we are instaintiate the ng-template and we are allowed to add different instaintiates-->
+        <div *ngTemplateOutlet="blankImage; context: {description: course.description}">
+
+        </div>
+        <div *ngTemplateOutlet="blankImage; context: {description: courses[1].description}">
+
+        </div>
+
+        <!-- Understanding how we build an template and pass it as input to another component. -->
+        <app-course-card (courseSelected)="onCourseSelected($event)" [course]="course" [noImageTpl]="blankImage">
+          <app-course-image [src]="course.iconUrl"></app-course-image>
+          <div class="course-description">
+            {{course.longDescription}}
+          </div>
+        </app-course-card>
+  </div>
+</body>
+</html>
