@@ -1,0 +1,52 @@
+<div class="top-menu">
+  <img class="logo"
+       src="https://angular-academy.s3.amazonaws.com/main-logo/main-page-logo-small-hat.png">
+
+</div>
+
+<div>
+
+  <div class="courses" *ngIf="courses$ | async as courses">
+    <!-- <course-card *ngFor="let course of courses"
+                 [course]="course">
+
+      <course-image [src]="course.iconUrl"></course-image>
+
+    </course-card> -->
+
+    <!-- 
+        We can obtain these courses variable from the courses observable by 
+        subscribing to it. 
+
+        We use the async pipe , it is a special built in angular pipe that is goin to 
+        take the courses observable and it's going to subsrcibe to it. 
+     -->
+     <!-- <course-card *ngFor="let course of (courses$ | async)"
+                 [course]="course" (courseChanged)="save($event)">
+
+      <course-image [src]="course.iconUrl"></course-image>
+    </course-card> -->
+
+    <!-- Understanding LifeCycle Hooks -->
+    <course-card *ngFor="courses[0] as course"
+          [course]="course" (courseChanged)="save($event)">
+
+      <course-image [src]="course.iconUrl"></course-image>
+    </course-card>
+  </div>
+  
+  <!-- Understanding Angular Pipes -->
+  <div class="courses">
+    <!-- Whenever we get the new value of courses , it gets pass down to the pipe. -->
+    <course-card *ngFor="let course of (courses | filterByCategory:'BEGINNER') "
+          [course]="course" (courseChanged)="save($event)">
+
+      <course-image [src]="course.iconUrl"></course-image>
+    </course-card>
+
+  </div>
+</div>
+
+
+
+
